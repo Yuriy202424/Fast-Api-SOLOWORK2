@@ -21,5 +21,5 @@ def migrate():
     up()
     drop()
     
-from .models import Data
+from .models import Data, Content
 migrate()

@@ -1,8 +1,12 @@
 from pydantic import BaseModel
 
 
-class DataRows(BaseModel):
-    id: int
-    number: int
-    content: str
 
+class DataRows(BaseModel):
+    number: int
+    password: str
+
+
+
+class ContentFiller(BaseModel):
+    content: str
