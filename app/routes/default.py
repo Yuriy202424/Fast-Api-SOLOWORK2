@@ -10,22 +10,52 @@ def index():
     return{"a":"Dildak"}
 
 
-@app.post("/adding/{number}/{password}")
-def adding(number : int, password : str):
+@app.post("/authentification/{user}/{password}")
+def authentification(user : str, password : str):
     with SESSION.begin() as session:
-        test = Data(number = number, password = password)
-        pw = password
+        test = Data(user = user, password = password)
         session.add(test)
 
 
-@app.post("/authentification/{content}")
-def content(content : str):
+@app.post("/content/{content}")
+def create_content(key: int, content : str):
     with SESSION.begin() as session:
-        num = session.scalar(select(Data.number))
-        if num == None:
+        us = session.scalar(select(Data.user))
+        if us == None:
             raise HTTPException(status_code=400, detail="You are not registered! You cant use this function")
         else:
-            test = Content(content = content)
-            session.add(test)
-            return(test)
+            if len(str(key)) == 3:
+                test = Content(key = key, content = content)
+                session.add(test)
+                return(test)
+            else:
+                raise HTTPException(status_code=400, detail="Key must be integer and only 3 digits")
         
+
+@app.delete("/delete/{pincode}")
+def delete_content(pincode: int):
+    with SESSION.begin() as session:
+        if len(str(pincode)) == 3:
+            del_content = session.scalar(select(Content).where(Content.key == pincode))
+            if del_content:
+                session.delete(del_content)
+                return {"message" : "deleted!"}
+            else:
+                raise HTTPException(status_code=400, detail="Key is not found")
+        else:
+            raise HTTPException(status_code=400, detail="Key must be integer and only 3 digits")
+        
+
+@app.post("/update/{pincode}/{content}")
+def upd_content(pincode: int, content: str):
+    with SESSION.begin() as session:
+        if len(str(pincode)) == 3:
+                upd = session.query(Content).filter(Content.key == pincode).first()
+                if upd:
+                    upd.content = content
+                    session.commit
+                    return {"message" : "Succesfully updated!!!"}
+                else:
+                    return {"message" : "Pincode(Key) not found!"}
+        else:
+            raise HTTPException(status_code=400, detail="Key must be integer and only 3 digits")

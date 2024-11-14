@@ -6,7 +6,7 @@ from .. import Base
 class Data(Base):
     __tablename__ = "datas"
     
-    number : Mapped[int]
+    user : Mapped[str]
     password : Mapped[str]
      
 
@@ -14,4 +14,5 @@ class Data(Base):
 class Content(Base):
     __tablename__ = "contents"
 
-    content : Mapped[int]
+    key: Mapped[int]
+    content : Mapped[str]
